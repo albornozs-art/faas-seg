@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RISK MATRIX | Sky Costanera — Evaluación de Influencers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #1e1c18;
+    --black-mid: #252218;
+    --black-soft: #2e2b20;
+    --black-card: #282520;
+    --gold: #d4a84b;
+    --gold-light: #f0cc70;
+    --gold-dim: #9a7c3a;
+    --gold-glow: rgba(212,168,75,0.18);
+    --white: #faf6ec;
+    --white-dim: #c8bfa8;
+    --white-faint: rgba(250,246,236,0.09);
+    --risk-low: #3de07a;
+    --risk-med: #f5a623;
+    --risk-high: #f05545;
+    --risk-extreme: #b22020;
+    --risk-veto: #ff2020;
+    --border: rgba(212,168,75,0.30);
+    --border-bright: rgba(212,168,75,0.65);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  .header {
+    position: relative;
+    padding: 40px 60px 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(212,168,75,0.10) 0%, rgba(40,37,32,0.6) 100%);
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 60px;
+    right: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .logo-block { display: flex; flex-direction: column; gap: 4px; }
+
+  .logo-top {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .logo-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: var(--white-dim);
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--white-dim);
+    line-height: 1.8;
+  }
+
+  .header-right span { color: var(--gold); }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 60px;
+    background: #2a2720;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .tab {
+    padding: 18px 30px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .tab:hover { color: var(--white); }
+
+  .tab.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+  }
+
+  /* MAIN CONTAINER */
+  .main { padding: 50px 60px; position: relative; z-index: 1; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--white-dim);
+    letter-spacing: 1px;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+
+  /* IDENTITY FORM */
+  .identity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .field-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .field-input {
+    background: #302d24;
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 12px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
+  }
+
+  .field-input:focus { border-color: var(--gold); }
+
+  .field-input::placeholder { color: rgba(176,168,152,0.3); }
+
+  select.field-input option { background: var(--black-card); }
+
+  /* BLOCKS */
+  .eval-block {
+    background: var(--black-card);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .eval-block:hover { border-color: var(--border-bright); }
+
+  .block-header {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    background: linear-gradient(90deg, rgba(212,168,75,0.08) 0%, transparent 100%);
+    user-select: none;
+  }
+
+  .block-number {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    width: 30px;
+  }
+
+  .block-title-text {
+    flex: 1;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 1px;
+  }
+
+  .block-weight {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: 2px;
+  }
+
+  .block-score-badge {
+    min-width: 60px;
+    padding: 4px 12px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    background: #302d24;
+    border: 1px solid var(--border);
+    color: var(--white-dim);
+    transition: all 0.4s;
+  }
+
+  .veto-flag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    background: rgba(255,0,0,0.1);
+    border: 1px solid rgba(255,0,0,0.3);
+    color: #ff6666;
+    display: none;
+  }
+
+  .block-body { padding: 28px; display: block; }
+
+  /* QUESTIONS */
+  .question-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+
+  .question-row:last-child { border-bottom: none; }
+
+  .q-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.5;
+  }
+
+  .q-sub {
+    font-size: 11px;
+    color: var(--white-dim);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .q-veto-indicator {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: #ff6666;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .q-controls { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; min-width: 200px; }
+
+  .radio-group { display: flex; gap: 8px; }
+
+  .radio-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--white-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .radio-btn:hover { border-color: var(--gold); color: var(--white); }
+
+  .radio-btn.selected-yes {
+    background: rgba(231,76,60,0.2);
+    border-color: #e74c3c;
+    color: #ff8888;
+  }
+
+  .radio-btn.selected-no {
+    background: rgba(46,204,113,0.15);
+    border-color: #2ecc71;
+    color: #7dffb3;
+  }
+
+  .radio-btn.selected-partial {
+    background: rgba(243,156,18,0.15);
+    border-color: #f39c12;
+    color: #ffd380;
+  }
+
+  .q-select {
+    background: #302d24;
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 8px 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    outline: none;
+    min-width: 200px;
+    cursor: pointer;
+  }
+  .q-select:focus { border-color: var(--gold); }
+  .q-select option { background: #302d24; }
+
+  /* GAUGE AREA */
+  .gauge-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+
+  .gauge-card {
+    background: var(--black-card);
+    border: 1px solid var(--border);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .gauge-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  /* GAUGE CLOCK */
+  .gauge-svg { width: 280px; height: 160px; }
+
+  .result-card {
+    background: var(--black-card);
+    border: 1px solid var(--border);
+    padding: 40px;
+    margin-bottom: 40px;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+
+  .result-level {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    transition: color 0.5s;
+  }
+
+  .result-score {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 64px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .result-score span {
+    font-size: 20px;
+    color: var(--gold-dim);
+  }
+
+  .result-decision {
+    text-align: center;
+    padding: 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    border: 2px solid;
+    margin-bottom: 30px;
+    transition: all 0.5s;
+  }
+
+  .decision-APROBADO {
+    color: var(--risk-low);
+    border-color: var(--risk-low);
+    background: rgba(46,204,113,0.06);
+  }
+
+  .decision-CONDICIONAL {
+    color: var(--risk-med);
+    border-color: var(--risk-med);
+    background: rgba(243,156,18,0.06);
+  }
+
+  .decision-RECHAZADO {
+    color: var(--risk-high);
+    border-color: var(--risk-high);
+    background: rgba(231,76,60,0.06);
+  }
+
+  .decision-VETADO {
+    color: var(--risk-veto);
+    border-color: var(--risk-veto);
+    background: rgba(255,0,0,0.08);
+    animation: pulse-veto 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-veto {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0.3); }
+    50% { box-shadow: 0 0 20px 4px rgba(255,0,0,0.2); }
+  }
+
+  /* BREAKDOWN TABLE */
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+
+  .breakdown-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+
+  .breakdown-table td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+    vertical-align: middle;
+  }
+
+  .breakdown-table tr:hover td { background: var(--white-faint); }
+
+  .bar-cell { width: 200px; }
+
+  .bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+  }
+
+  /* SCORE PILL */
+  .score-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    border: 1px solid;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  /* RECOMMENDATIONS */
+  .reco-box {
+    background: #2a2720;
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .reco-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .reco-text {
+    font-size: 14px;
+    color: var(--white-dim);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 14px 36px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+  }
+
+  .btn-gold {
+    background: var(--gold);
+    color: var(--black);
+  }
+
+  .btn-gold:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(201,168,76,0.3);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--white-dim);
+  }
+
+  .btn-outline:hover { border-color: var(--gold); color: var(--white); }
+
+  .btn-danger {
+    background: rgba(231,76,60,0.15);
+    border: 1px solid rgba(231,76,60,0.4);
+    color: #ff8888;
+  }
+
+  .btn-danger:hover { background: rgba(231,76,60,0.25); }
+
+  .btn-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 30px; }
+
+  /* HISTORY */
+  .history-item {
+    background: var(--black-card);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    gap: 20px;
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+
+  .history-item:hover { border-color: var(--gold); }
+
+  .hist-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .hist-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--white-dim);
+    margin-top: 4px;
+  }
+
+  .hist-score {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    color: var(--gold);
+  }
+
+  .hist-level {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 5px 14px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+
+  .hist-btn-delete {
+    background: transparent;
+    border: 1px solid rgba(231,76,60,0.2);
+    color: rgba(231,76,60,0.5);
+    padding: 6px 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .hist-btn-delete:hover {
+    border-color: #e74c3c;
+    color: #ff8888;
+    background: rgba(231,76,60,0.1);
+  }
+
+  .empty-history {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--white-dim);
+    font-size: 14px;
+    letter-spacing: 2px;
+    border: 1px dashed rgba(201,168,76,0.15);
+  }
+
+  /* VETO OVERLAY */
+  .veto-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .veto-overlay.show { display: flex; }
+
+  .veto-icon {
+    font-size: 80px;
+    animation: pulse-veto 1s ease-in-out infinite;
+  }
+
+  .veto-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: #ff0000;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+  }
+
+  .veto-msg {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: rgba(255,100,100,0.8);
+    letter-spacing: 3px;
+    text-align: center;
+    max-width: 600px;
+    line-height: 2;
+  }
+
+  /* PRINT */
+  .print-section { display: none; }
+
+  @media print {
+    body { background: white; color: black; }
+    .tab-bar, .btn-row, .veto-overlay { display: none !important; }
+    .panel { display: block !important; }
+    .print-section { display: block; }
+    .header { background: white; border-bottom: 2px solid #c9a84c; }
+    .logo-main { color: #8a6a1e; }
+    .main { padding: 20px; }
+  }
+
+  /* PROGRESS BAR TOP */
+  .progress-strip {
+    height: 3px;
+    background: var(--black-mid);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold-light));
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* SEPARATOR */
+  .separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    margin: 40px 0;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+  .info-box {
+    background: var(--black-card);
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+
+  .info-box-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .info-box-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--white);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  .tag-veto {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(255,0,0,0.12);
+    border: 1px solid rgba(255,0,0,0.3);
+    color: #ff6666;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  .conditions-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .conditions-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    font-size: 13px;
+    color: var(--white-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+  }
+
+  .conditions-list li::before {
+    content: '▸';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .animate-in {
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .current-date-time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-block">
+    <div class="logo-top">OFFICE HUB COSTANERA CENTER</div>
+    <div class="logo-main">FAAS_SEG &nbsp;<span style="font-size:18px;font-weight:300;letter-spacing:4px;color:var(--gold-dim);">Seguridad Integral</span></div>
+    <div class="logo-sub">Sistema de Evaluación de Riesgo — Influencers Sky Costanera</div>
+  </div>
+  <div class="header-right">
+    <div class="current-date-time" id="clock-display">--</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--gold-light);letter-spacing:1px;">Fernando Albornoz Silva</div>
+    <div style="font-size:11px;color:var(--white-dim);letter-spacing:1px;">Jefe de Seguridad Gran Torre Costanera &nbsp;·&nbsp; <span style="color:var(--gold);">Sky Costanera</span></div>
+    <div>Av. Andrés Bello 2477, Providencia, Santiago</div>
+    <div>Versión <span>2.0</span> &nbsp;·&nbsp; Ley N°<span>21.659</span> &nbsp;·&nbsp; DS-<span>209</span></div>
+  </div>
+</div>
+
+<!-- PROGRESS STRIP -->
+<div class="progress-strip"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab active" data-tab="eval" onclick="switchTab('eval')">① Evaluación</div>
+  <div class="tab" data-tab="result" onclick="switchTab('result')">② Resultado</div>
+  <div class="tab" data-tab="ficha" onclick="switchTab('ficha')">③ Ficha Activación</div>
+  <div class="tab" data-tab="history" onclick="switchTab('history')">④ Historial</div>
+  <div class="tab" data-tab="guide" onclick="switchTab('guide')">⑤ Guía</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ===== PANEL EVALUACIÓN ===== -->
+<div class="panel active" id="panel-eval">
+
+  <div class="section-title">Ficha de Identificación del Solicitante</div>
+  <div class="section-desc">Complete los datos del influencer o productora antes de iniciar la evaluación de riesgo</div>
+
+  <div class="identity-grid">
+    <div class="field-group">
+      <label class="field-label">Nombre / Alias del Influencer</label>
+      <input class="field-input" id="inf-name" type="text" placeholder="Nombre artístico o real">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Red(es) Social(es) Principal(es)</label>
+      <input class="field-input" id="inf-social" type="text" placeholder="@usuario / plataforma">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Número de Seguidores (aprox.)</label>
+      <select class="field-input" id="inf-followers">
+        <option value="">— Seleccionar —</option>
+        <option value="nano">Nano (< 10K)</option>
+        <option value="micro">Micro (10K – 100K)</option>
+        <option value="mid">Mid-tier (100K – 500K)</option>
+        <option value="macro">Macro (500K – 1M)</option>
+        <option value="mega">Mega (> 1M)</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Productora / Empresa Representante</label>
+      <input class="field-input" id="inf-company" type="text" placeholder="Nombre de productora (si aplica)">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Tipo de Evento Solicitado</label>
+      <select class="field-input" id="inf-event">
+        <option value="">— Seleccionar —</option>
+        <option>Evento privado de pago</option>
+        <option>Evento abierto / masivo</option>
+        <option>Grabación / Producción audiovisual</option>
+        <option>Lanzamiento de producto</option>
+        <option>Meet & Greet</option>
+        <option>Transmisión en vivo</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Capacidad Estimada de Asistentes</label>
+      <select class="field-input" id="inf-capacity">
+        <option value="">— Seleccionar —</option>
+        <option>50 – 100 personas</option>
+        <option>101 – 200 personas</option>
+        <option>201 – 400 personas</option>
+        <option>401 – 700 personas</option>
+        <option>Más de 700 personas</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Fecha de Evaluación</label>
+      <input class="field-input" id="inf-date" type="date">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Evaluado por</label>
+      <input class="field-input" id="inf-evaluator" type="text" placeholder="Nombre del analista">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Rut / Identificación</label>
+      <input class="field-input" id="inf-rut" type="text" placeholder="RUT o pasaporte">
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- BLOCKS CONTAINER -->
+  <div id="blocks-container"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="calcular()">CALCULAR RIESGO</button>
+    <button class="btn btn-outline" onclick="resetForm()">LIMPIAR FORMULARIO</button>
+  </div>
+
+</div>
+
+<!-- ===== PANEL RESULTADO ===== -->
+<div class="panel" id="panel-result">
+
+  <div class="section-title">Resultado de Evaluación de Riesgo</div>
+  <div class="section-desc">Análisis integral basado en 8 dimensiones de seguridad — Infraestructura Sky Costanera</div>
+
+  <div class="gauge-area">
+    <div class="gauge-card">
+      <div class="gauge-title">Índice de Riesgo Global</div>
+      <svg class="gauge-svg" viewBox="0 0 280 160" id="gaugeSvg">
+        <!-- Background arc -->
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#2ecc71"/>
+            <stop offset="40%" style="stop-color:#f39c12"/>
+            <stop offset="70%" style="stop-color:#e74c3c"/>
+            <stop offset="100%" style="stop-color:#8e0000"/>
+          </linearGradient>
+        </defs>
+        <!-- Track -->
+        <path d="M 20 140 A 120 120 0 0 1 260 140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="18" stroke-linecap="round"/>
+        <!-- Color arc -->
+        <path d="M 20 140 A 120 120 0 0 1 260 140" fill="none" stroke="url(#gaugeGrad)" stroke-width="18" stroke-linecap="round" opacity="0.35"/>
+        <!-- Needle -->
+        <g id="gaugeNeedle" transform="rotate(-90, 140, 140)">
+          <line x1="140" y1="140" x2="140" y2="40" stroke="#d4a84b" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="140" cy="140" r="8" fill="#302d24" stroke="#d4a84b" stroke-width="2"/>
+          <circle cx="140" cy="40" r="4" fill="#d4a84b"/>
+        </g>
+        <!-- Labels -->
+        <text x="16" y="158" fill="#2ecc71" font-family="Share Tech Mono, monospace" font-size="10">BAJO</text>
+        <text x="95" y="30" fill="#f39c12" font-family="Share Tech Mono, monospace" font-size="10">MEDIO</text>
+        <text x="198" y="30" fill="#e74c3c" font-family="Share Tech Mono, monospace" font-size="10">ALTO</text>
+        <text x="230" y="158" fill="#8e0000" font-family="Share Tech Mono, monospace" font-size="10">EXT.</text>
+        <!-- Score display -->
+        <text id="gaugeScore" x="140" y="118" text-anchor="middle" fill="#c9a84c" font-family="Cormorant Garamond, serif" font-size="34" font-weight="700">0</text>
+        <text x="140" y="132" text-anchor="middle" fill="rgba(201,168,76,0.5)" font-family="Share Tech Mono, monospace" font-size="9">PUNTAJE</text>
+      </svg>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;" id="result-level-gauge">—</div>
+    </div>
+
+    <div class="gauge-card">
+      <div class="gauge-title">Desglose por Dimensión</div>
+      <div style="width:100%" id="mini-bars"></div>
+    </div>
+  </div>
+
+  <!-- DECISION BANNER -->
+  <div class="result-decision" id="result-decision">— PENDIENTE DE EVALUACIÓN —</div>
+
+  <!-- VETO REASONS -->
+  <div id="veto-reasons-box" style="display:none; margin-bottom:30px;">
+    <div style="background:rgba(255,0,0,0.06); border:1px solid rgba(255,0,0,0.3); padding:24px 28px;">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:3px; color:#ff6666; margin-bottom:12px;">▲ CRITERIOS DE VETO ACTIVADOS</div>
+      <div id="veto-reasons-list" style="font-size:13px; color:rgba(255,150,150,0.9); line-height:2;"></div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN TABLE -->
+  <div class="result-card">
+    <div class="section-title" style="margin-bottom:20px;">Detalle por Dimensión de Riesgo</div>
+    <table class="breakdown-table" id="breakdown-table">
+      <thead>
+        <tr>
+          <th>Dimensión</th>
+          <th>Ponderación</th>
+          <th>Puntaje Bruto</th>
+          <th>Aporte al Total</th>
+          <th>Nivel</th>
+          <th>Barra</th>
+        </tr>
+      </thead>
+      <tbody id="breakdown-body"></tbody>
+    </table>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="result-card">
+    <div class="section-title" style="margin-bottom:20px;">Medidas y Recomendaciones Operacionales</div>
+    <div id="recommendations-container"></div>
+  </div>
+
+  <!-- IDENTIFIED ENTITY -->
+  <div class="grid-2" style="margin-bottom:30px;">
+    <div class="info-box">
+      <div class="info-box-title">Influencer Evaluado</div>
+      <div class="info-box-value" id="res-name">—</div>
+      <div style="font-size:12px; color:var(--white-dim); margin-top:6px;" id="res-social">—</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">Parámetros del Evento</div>
+      <div style="font-size:13px; color:var(--white-dim); line-height:2;" id="res-event-info">—</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="saveToHistory()">GUARDAR EN HISTORIAL</button>
+    <button class="btn btn-outline" onclick="printReport()">IMPRIMIR INFORME</button>
+    <button class="btn btn-outline" onclick="switchTab('eval')">NUEVA EVALUACIÓN</button>
+  </div>
+
+</div>
+
+<!-- ===== PANEL HISTORIAL ===== -->
+<div class="panel" id="panel-history">
+
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
+    <div>
+      <div class="section-title">Historial de Evaluaciones</div>
+      <div class="section-desc">Registro de todas las evaluaciones realizadas — almacenadas localmente en este dispositivo</div>
+    </div>
+    <button class="btn btn-danger" onclick="clearHistory()">BORRAR TODO</button>
+  </div>
+
+  <div id="history-container"></div>
+
+</div>
+
+<!-- ===== PANEL GUÍA ===== -->
+<div class="panel" id="panel-guide">
+
+  <div class="section-title">Guía Operacional y Marco Legal</div>
+  <div class="section-desc">Referencia técnica para la correcta aplicación de la Matriz de Riesgo</div>
+
+  <div class="grid-2" style="margin-bottom:40px;">
+    <div>
+      <div class="eval-block">
+        <div class="block-header" style="cursor:default;">
+          <div class="block-title-text">Escala de Criticidad</div>
+        </div>
+        <div class="block-body">
+          <table style="width:100%; font-size:13px;">
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--risk-low); font-family:'Share Tech Mono',monospace; letter-spacing:2px;">BAJO</td>
+              <td style="padding:10px 0; color:var(--white-dim);">0 – 24 puntos</td>
+              <td style="padding:10px 0; color:var(--risk-low);">APROBADO</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--risk-med); font-family:'Share Tech Mono',monospace; letter-spacing:2px;">MEDIO</td>
+              <td style="padding:10px 0; color:var(--white-dim);">25 – 49 puntos</td>
+              <td style="padding:10px 0; color:var(--risk-med);">CONDICIONAL</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--risk-high); font-family:'Share Tech Mono',monospace; letter-spacing:2px;">ALTO</td>
+              <td style="padding:10px 0; color:var(--white-dim);">50 – 74 puntos</td>
+              <td style="padding:10px 0; color:var(--risk-high);">RECHAZADO</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--risk-extreme); font-family:'Share Tech Mono',monospace; letter-spacing:2px;">EXTREMO</td>
+              <td style="padding:10px 0; color:var(--white-dim);">75 – 100 puntos</td>
+              <td style="padding:10px 0; color:var(--risk-extreme);">RECHAZADO</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0; color:var(--risk-veto); font-family:'Share Tech Mono',monospace; letter-spacing:2px;">VETO</td>
+              <td style="padding:10px 0; color:var(--white-dim);">Criterio automático</td>
+              <td style="padding:10px 0; color:var(--risk-veto);">VETADO</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="eval-block">
+        <div class="block-header" style="cursor:default;">
+          <div class="block-title-text">Marco Legal Aplicable</div>
+        </div>
+        <div class="block-body">
+          <ul class="conditions-list">
+            <li>Ley N°21.659 de Seguridad Privada Chile y su Reglamento DS-209</li>
+            <li>Código Procesal Penal — obligación de denuncia ante indicios de delito</li>
+            <li>Código Penal — art. 269 (encubrimiento), art. 296 (amenazas), art. 298 (sedición)</li>
+            <li>Ley 20.000 (tráfico de estupefacientes) — nexos verificables con narco</li>
+            <li>Ley 19.628 — protección de datos personales</li>
+            <li>Reglamento interno de seguridad Cencosud / Gran Torre Costanera</li>
+            <li>Protocolo de coordinación con Carabineros y PDI para eventos masivos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="eval-block">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-title-text">Criterios de Veto Automático — Detalle</div>
+    </div>
+    <div class="block-body">
+      <ul class="conditions-list">
+        <li><strong style="color:var(--white);">Nexos con crimen organizado o narcotráfico:</strong> Cualquier vinculación documentada o de fuente abierta confiable con grupos delictuales, carteles, pandillas u organizaciones criminales activa veto inmediato sin posibilidad de apelación operacional.</li>
+        <li><strong style="color:var(--white);">Incitación documentada a violencia masiva:</strong> Publicaciones, videos o declaraciones recientes que llamen explícitamente a actos de violencia física, destrucción de propiedad o confrontación con fuerzas de orden.</li>
+        <li><strong style="color:var(--white);">Historial de eventos con víctimas o heridos:</strong> Antecedentes verificables de eventos anteriores del influencer que hayan resultado en lesionados, fallecidos, o intervención policial por violencia.</li>
+        <li><strong style="color:var(--white);">Orden judicial o proceso penal vigente:</strong> Existencia de medidas cautelares, arraigo, orden de alejamiento, o formalización en proceso penal activo relacionado con delitos de violencia, drogas o crimen organizado.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== PANEL FICHA DE ACTIVACION ===== -->
+<div class="panel" id="panel-ficha">
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div>
+      <div class="section-title">Ficha de Activacion &mdash; Sky Costanera</div>
+      <div class="section-desc">Documento oficial de visita tecnica y evaluacion operacional &middot; Mirador Sky Costanera &middot; Pisos 61&ndash;62 &middot; Gran Torre Costanera</div>
+    </div>
+    <button class="btn btn-gold" onclick="printFicha()" style="flex-shrink:0;margin-top:4px;">IMPRIMIR FICHA</button>
+  </div>
+
+  <!-- FLUJO DE APROBACION -->
+  <div class="eval-block" style="margin-bottom:32px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number" style="color:var(--gold);">&rarr;</div>
+      <div class="block-title-text">Flujo de Revision y Aprobacion &mdash; Sky Costanera</div>
+      <div class="block-weight">6 ETAPAS</div>
+    </div>
+    <div class="block-body">
+      <div style="display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr;gap:6px;margin-bottom:16px;">
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.12);border:1px solid var(--border);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);margin-bottom:4px;">01</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Visita Tecnica</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Evaluacion presencial del espacio Sky, dimensiones y requerimientos logisticos</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding-bottom:36px;color:var(--gold-dim);font-size:18px;">&rarr;</div>
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.12);border:1px solid var(--border);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);margin-bottom:4px;">02</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Formalizar Solicitud</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Ingreso de ficha tecnica, renders, certificados y Matrix de Riesgo completada</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding-bottom:36px;color:var(--gold-dim);font-size:18px;">&rarr;</div>
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.12);border:1px solid var(--border);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);margin-bottom:4px;">03</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Revision Seguridad</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Jefatura de Seguridad aplica Matrix de Riesgo y emite dictamen</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr;gap:6px;">
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.12);border:1px solid var(--border);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);margin-bottom:4px;">04</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Aprobacion Operaciones</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Validacion Tower Manager / Center Manager. Firma de contrato con clausulas de seguridad</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding-bottom:36px;color:var(--gold-dim);font-size:18px;">&rarr;</div>
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.12);border:1px solid var(--border);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);margin-bottom:4px;">05</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Instalacion</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Montaje nocturno (limite 09:00 hrs). Acta de entrega y recepcion obligatoria</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding-bottom:36px;color:var(--gold-dim);font-size:18px;">&rarr;</div>
+        <div style="text-align:center;">
+          <div style="background:rgba(212,168,75,0.18);border:1px solid var(--border-bright);padding:16px 8px;margin-bottom:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold-light);margin-bottom:4px;">06</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--white);">Supervision Final</div>
+          </div>
+          <div style="font-size:11px;color:var(--white-dim);line-height:1.5;">Revision instalacion por Jefatura de Seguridad y activacion del protocolo de evento</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATOS DE IDENTIFICACION -->
+  <div class="eval-block" style="margin-bottom:24px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number">FA</div>
+      <div class="block-title-text">Datos de Identificacion de la Activacion</div>
+    </div>
+    <div class="block-body">
+      <div class="identity-grid">
+        <div class="field-group">
+          <label class="field-label">Nombre de la Activacion / Evento</label>
+          <input class="field-input" id="fa-nombre" type="text" placeholder="Nombre del evento o activacion">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Nombre Responsable</label>
+          <input class="field-input" id="fa-responsable" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Telefono / Mail de Contacto</label>
+          <input class="field-input" id="fa-contacto" type="text" placeholder="+56 9 / correo electronico">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Fecha Inicio</label>
+          <input class="field-input" id="fa-fecha-inicio" type="date">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Fecha Termino</label>
+          <input class="field-input" id="fa-fecha-termino" type="date">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Lugar en Sky Costanera</label>
+          <select class="field-input" id="fa-lugar">
+            <option value="">&#8212; Seleccionar &#8212;</option>
+            <option>Piso 61 &mdash; Mirador Sky Costanera</option>
+            <option>Piso 62 &mdash; Terraza Sky Costanera</option>
+            <option>Pisos 61&ndash;62 (uso total)</option>
+            <option>Otro (especificar en observaciones)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Es un lugar habilitado?</label>
+          <select class="field-input" id="fa-habilitado">
+            <option value="">&#8212; Seleccionar &#8212;</option>
+            <option>Si &mdash; lugar habilitado para activaciones</option>
+            <option>No &mdash; requiere habilitacion especial</option>
+            <option>Parcial &mdash; requiere adecuaciones menores</option>
+          </select>
+        </div>
+        <div class="field-group" style="grid-column:span 2;">
+          <label class="field-label">Descripcion General de la Activacion</label>
+          <textarea class="field-input" id="fa-descripcion" rows="3" placeholder="Tipo de evento, dinamica, objetivos y caracteristicas principales..." style="resize:vertical;"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1: SEGURIDAD -->
+  <div class="eval-block" style="margin-bottom:24px;">
+    <div class="block-header" style="cursor:default;background:linear-gradient(90deg,rgba(212,168,75,0.10) 0%,transparent 100%);">
+      <div class="block-number">S1</div>
+      <div class="block-title-text">Seguridad &mdash; Sky Costanera</div>
+      <div class="block-weight">BLOQUE CRITICO</div>
+    </div>
+    <div class="block-body" id="ficha-seg-container"></div>
+  </div>
+
+  <!-- S2: COMUNICACION -->
+  <div class="eval-block" style="margin-bottom:24px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number">S2</div>
+      <div class="block-title-text">Comunicacion y Redes Sociales</div>
+    </div>
+    <div class="block-body" id="ficha-com-container"></div>
+  </div>
+
+  <!-- S3: MANTENIMIENTO -->
+  <div class="eval-block" style="margin-bottom:24px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number">S3</div>
+      <div class="block-title-text">Mantenimiento e Infraestructura</div>
+    </div>
+    <div class="block-body" id="ficha-mant-container"></div>
+  </div>
+
+  <!-- S4: PREVENCION -->
+  <div class="eval-block" style="margin-bottom:24px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number">S4</div>
+      <div class="block-title-text">Prevencion y Seguridad en el Trabajo</div>
+    </div>
+    <div class="block-body" id="ficha-prev-container"></div>
+  </div>
+
+  <!-- RESTRICCIONES -->
+  <div class="eval-block" style="margin-bottom:32px;border-color:rgba(255,80,80,0.22);">
+    <div class="block-header" style="cursor:default;background:linear-gradient(90deg,rgba(255,50,50,0.07) 0%,transparent 100%);">
+      <div class="block-number" style="color:#ff8888;">R</div>
+      <div class="block-title-text">Restricciones Operacionales Obligatorias &mdash; Sky Costanera</div>
+    </div>
+    <div class="block-body">
+      <ul class="conditions-list">
+        <li>Usuario KSEC y solicitudes obligatorio con su respectiva documentacion antes del evento</li>
+        <li>Al formalizar solicitud debe adjuntarse render, explicacion de dinamicas y cronograma detallado</li>
+        <li>Mantener pasillos despejados en pisos 61&ndash;62. No bloquear vias de evacuacion bajo ninguna circunstancia</li>
+        <li>No superar 1.6 mts con graficas en murallas del Sky Costanera</li>
+        <li>El montaje debe realizarse en horario nocturno &mdash; limite maximo 09:00 hrs del dia de inicio</li>
+        <li>No comprometer ni bloquear salidas de emergencia ni escaleras de evacuacion presurizada</li>
+        <li>Toda activacion con influencer debe contar con Matrix de Riesgo aprobada por Jefatura de Seguridad</li>
+        <li>Dotacion minima de seguridad: 1 guardia por cada 50 asistentes + 1 supervisor dedicado al evento</li>
+        <li>Prohibido el uso de pirotecnia, fuego abierto o materiales inflamables en pisos Sky</li>
+        <li>Ingreso de drones o equipos de grabacion aerea requiere autorizacion explicita de Tower Manager</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FIRMAS -->
+  <div class="grid-2" style="margin-bottom:30px;">
+    <div class="eval-block">
+      <div class="block-header" style="cursor:default;">
+        <div class="block-title-text">Responsable Productora / Influencer</div>
+      </div>
+      <div class="block-body">
+        <div class="field-group" style="margin-bottom:14px;">
+          <label class="field-label">Nombre completo</label>
+          <input class="field-input" id="fa-firma-prod-nombre" type="text" placeholder="Nombre del responsable">
+        </div>
+        <div class="field-group" style="margin-bottom:14px;">
+          <label class="field-label">RUT</label>
+          <input class="field-input" id="fa-firma-prod-rut" type="text" placeholder="RUT">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Firma (nombre mecanografiado como validacion)</label>
+          <input class="field-input" id="fa-firma-prod-firma" type="text" placeholder="Ingrese nombre para validar">
+        </div>
+      </div>
+    </div>
+    <div class="eval-block">
+      <div class="block-header" style="cursor:default;">
+        <div class="block-title-text">Responsable Operaciones / Seguridad</div>
+      </div>
+      <div class="block-body">
+        <div class="field-group" style="margin-bottom:14px;">
+          <label class="field-label">Nombre completo</label>
+          <input class="field-input" id="fa-firma-ops-nombre" type="text" placeholder="Nombre del responsable">
+        </div>
+        <div class="field-group" style="margin-bottom:14px;">
+          <label class="field-label">Cargo</label>
+          <input class="field-input" id="fa-firma-ops-cargo" type="text" placeholder="Jefe de Seguridad / Tower Manager">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Firma (nombre mecanografiado como validacion)</label>
+          <input class="field-input" id="fa-firma-ops-firma" type="text" placeholder="Ingrese nombre para validar">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBSERVACIONES -->
+  <div class="eval-block" style="margin-bottom:32px;">
+    <div class="block-header" style="cursor:default;">
+      <div class="block-number">OBS</div>
+      <div class="block-title-text">Observaciones Generales</div>
+    </div>
+    <div class="block-body">
+      <textarea class="field-input" id="fa-observaciones" rows="5"
+        placeholder="Registre aqui cualquier observacion relevante, condicion especial, acuerdo particular o nota de seguridad para este evento en Sky Costanera..."
+        style="resize:vertical;width:100%;"></textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="printFicha()">IMPRIMIR FICHA DE ACTIVACION</button>
+    <button class="btn btn-outline" onclick="clearFicha()">LIMPIAR FICHA</button>
+    <button class="btn btn-outline" onclick="switchTab('eval')">IR A EVALUACION DE RIESGO</button>
+  </div>
+
+</div>
+<!-- /panel-ficha -->
+
+</div><!-- /main -->
+
+<!-- VETO OVERLAY -->
+<div class="veto-overlay" id="vetoOverlay">
+  <div class="veto-icon">🚫</div>
+  <div class="veto-title">VETO AUTOMÁTICO</div>
+  <div class="veto-msg" id="vetoOverlayMsg">
+    Se han detectado criterios de veto automático.<br>
+    La solicitud queda DENEGADA de forma inmediata.<br>
+    Notifique a Tower Manager y documente el incidente.
+  </div>
+  <button class="btn btn-outline" onclick="document.getElementById('vetoOverlay').classList.remove('show')">CERRAR Y VER INFORME</button>
+</div>
+
+<script>
+// ============================================================
+//  DATA MODEL
+// ============================================================
+
+const BLOCKS = [
+  {
+    id: "B1",
+    title: "Vínculos con Crimen Organizado y Narcotráfico",
+    weight: 0.20,
+    description: "Evaluación de nexos documentados o de fuente abierta con organizaciones delictuales",
+    questions: [
+      {
+        id: "B1Q1",
+        text: "¿Existen publicaciones, noticias, reportajes o registros en fuentes abiertas que vinculen al influencer con grupos del crimen organizado?",
+        sub: "Incluir narco, pandillas, carteles u organizaciones ilícitas",
+        veto: true,
+        type: "yesno",
+        scores: { yes: 100, partial: 60, no: 0 }
+      },
+      {
+        id: "B1Q2",
+        text: "¿El círculo íntimo del influencer (familia, amigos, colaboradores habituales) mantiene nexos documentados con grupos delictuales?",
+        sub: "Considerar apariciones en videos, fotos, menciones públicas",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 80, partial: 40, no: 0 }
+      },
+      {
+        id: "B1Q3",
+        text: "¿El influencer ha sido detenido, formalizado o procesado por delitos relacionados con drogas, armas o crimen organizado?",
+        sub: "Verificar en registros públicos del Poder Judicial",
+        veto: true,
+        type: "yesno",
+        scores: { yes: 100, partial: 50, no: 0 }
+      },
+      {
+        id: "B1Q4",
+        text: "¿En sus contenidos muestra, porta o hace apología de armas de fuego o sustancias controladas?",
+        sub: "Evaluar frecuencia: ocasional, frecuente o sistemático",
+        veto: false,
+        type: "select",
+        options: ["No muestra ningún contenido de este tipo", "Ocasional (1-2 publicaciones aisladas)", "Frecuente (patrón recurrente en su contenido)", "Sistemático (es parte de su imagen de marca)"],
+        scores: [0, 30, 70, 100]
+      }
+    ]
+  },
+  {
+    id: "B2",
+    title: "Comportamiento Violento en Redes Sociales",
+    weight: 0.18,
+    description: "Análisis del historial de contenido violento, agresivo o intimidatorio en plataformas digitales",
+    questions: [
+      {
+        id: "B2Q1",
+        text: "¿El influencer publica regularmente contenido que muestre, glorifique o incite a la violencia física?",
+        sub: "Incluir peleas, agresiones, confrontaciones físicas filmadas",
+        veto: false,
+        type: "select",
+        options: ["No, su contenido no incluye violencia", "Aisladamente, sin patrón claro", "Con frecuencia, forma parte de su estilo", "Sistemáticamente, define su identidad digital"],
+        scores: [0, 25, 65, 100]
+      },
+      {
+        id: "B2Q2",
+        text: "¿Ha realizado amenazas directas, doxxing o campañas de hostigamiento contra personas públicas o privadas?",
+        sub: "Verificar en historial de redes sociales y prensa",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 80, partial: 40, no: 0 }
+      },
+      {
+        id: "B2Q3",
+        text: "¿Sus seguidores muestran comportamientos agresivos o coordinados (mobbing digital) inducidos por el influencer?",
+        sub: "Analizar sección de comentarios y menciones en sus publicaciones",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 60, partial: 30, no: 0 }
+      },
+      {
+        id: "B2Q4",
+        text: "¿Ha publicado contenido que glorifique la violencia hacia autoridades, fuerzas de orden o instituciones del Estado?",
+        sub: "Incluir Carabineros, PDI, Ejército, poder judicial",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 75, partial: 35, no: 0 }
+      }
+    ]
+  },
+  {
+    id: "B3",
+    title: "Incitación al Caos, Odio y Conductas Ilegales",
+    weight: 0.17,
+    description: "Evaluación de contenido que promueva discriminación, sedición o conductas contrarias al orden público",
+    questions: [
+      {
+        id: "B3Q1",
+        text: "¿Publica contenido homofóbico, racista, xenófobo o de odio hacia grupos específicos de la población?",
+        sub: "Considerar discurso de odio explícito o encubierto",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 70, partial: 35, no: 0 }
+      },
+      {
+        id: "B3Q2",
+        text: "¿Ha convocado o incitado a marchas no autorizadas, bloqueos, tomas o actos de desobediencia civil masiva?",
+        sub: "Incluir llamados en stories, lives, posts o plataformas de audio",
+        veto: true,
+        type: "yesno",
+        scores: { yes: 100, partial: 60, no: 0 }
+      },
+      {
+        id: "B3Q3",
+        text: "¿Su contenido incluye instrucciones, referencias o glorificación de actos delictuales concretos?",
+        sub: "Robo, vandalismo, evasión, destrucción de bienes públicos",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 80, partial: 40, no: 0 }
+      },
+      {
+        id: "B3Q4",
+        text: "¿Promueve explícitamente el consumo o distribución de drogas en sus plataformas?",
+        sub: "Evaluar si es glamourización ocasional o apología sistemática",
+        veto: false,
+        type: "select",
+        options: ["No hay referencia a drogas", "Referencias veladas o humorísticas aisladas", "Glamourización frecuente del consumo", "Apología sistemática o instrucción de distribución"],
+        scores: [0, 20, 55, 90]
+      }
+    ]
+  },
+  {
+    id: "B4",
+    title: "Perfil y Segmento del Público Convocado",
+    weight: 0.15,
+    description: "Análisis del perfil socioeconómico, etario y conductual de la audiencia del influencer",
+    questions: [
+      {
+        id: "B4Q1",
+        text: "¿Cuál es el rango etario predominante de su audiencia?",
+        sub: "Basarse en estadísticas públicas o análisis de comentarios",
+        veto: false,
+        type: "select",
+        options: ["Adultos (+25 años) predominantemente", "Mixto adulto-joven (18-30 años)", "Jóvenes (15-24 años) predominantemente", "Menores de edad (< 18 años) predominantemente"],
+        scores: [0, 20, 50, 80]
+      },
+      {
+        id: "B4Q2",
+        text: "¿El segmento socio-económico de su audiencia presenta historial de comportamientos de riesgo en espacios cerrados?",
+        sub: "Analizar eventos previos con ese segmento de público en recintos similares",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 60, partial: 30, no: 0 }
+      },
+      {
+        id: "B4Q3",
+        text: "¿La comunidad del influencer muestra conductas de fanatismo extremo (invasión de escenarios, violencia entre fans, etc.)?",
+        sub: "Verificar registros de eventos anteriores y cobertura de prensa",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 70, partial: 35, no: 0 }
+      },
+      {
+        id: "B4Q4",
+        text: "¿El ticket o acceso al evento prevé un control de identidad y registro adecuado?",
+        sub: "Evaluar el sistema de ticketing propuesto por el solicitante",
+        veto: false,
+        type: "select",
+        options: ["Sí, sistema robusto con identificación individual", "Parcial, ticketing sin verificación de identidad", "Sin ticketing definido aún", "No contempla control de acceso específico"],
+        scores: [0, 30, 60, 90]
+      }
+    ]
+  },
+  {
+    id: "B5",
+    title: "Capacidad de Convocatoria Masiva No Controlada",
+    weight: 0.14,
+    description: "Evaluación del riesgo de desborde de asistencia por convocatorias abiertas en redes sociales",
+    questions: [
+      {
+        id: "B5Q1",
+        text: "¿El influencer tiene historial de convocatorias que superaron el aforo previsto en más de un 30%?",
+        sub: "Verificar en registros de eventos anteriores y cobertura de prensa",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 80, partial: 40, no: 0 }
+      },
+      {
+        id: "B5Q2",
+        text: "¿El evento será anunciado públicamente en redes sociales con acceso libre de información sobre el lugar exacto?",
+        sub: "Incluir dirección, piso y detalles operacionales del Sky Costanera",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 70, partial: 35, no: 0 }
+      },
+      {
+        id: "B5Q3",
+        text: "¿Tiene capacidad de movilización viral espontánea que pueda atraer público no invitado al edificio?",
+        sub: "Considerar número de seguidores activos y tasa de engagement",
+        veto: false,
+        type: "select",
+        options: ["Baja (< 100K seguidores, engagement bajo)", "Moderada (100K-500K, engagement medio)", "Alta (500K-1M, engagement alto)", "Extrema (> 1M, tasa viral documentada)"],
+        scores: [0, 25, 60, 90]
+      },
+      {
+        id: "B5Q4",
+        text: "¿El solicitante presenta plan de gestión de comunicaciones y redes sociales durante el evento?",
+        sub: "Plan que evite divulgar datos operacionales del edificio en tiempo real",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 0, partial: 40, no: 70 }
+      }
+    ]
+  },
+  {
+    id: "B6",
+    title: "Historial de Eventos con Incidentes de Seguridad",
+    weight: 0.08,
+    description: "Registro verificable de incidentes en eventos anteriores del influencer o de la productora",
+    questions: [
+      {
+        id: "B6Q1",
+        text: "¿En eventos previos del influencer se han registrado lesionados, fallecidos o intervención policial por violencia?",
+        sub: "Revisar registros de Carabineros, PDI, SAMU y prensa",
+        veto: true,
+        type: "yesno",
+        scores: { yes: 100, partial: 60, no: 0 }
+      },
+      {
+        id: "B6Q2",
+        text: "¿La productora representante tiene antecedentes de incumplimiento de protocolos de seguridad en eventos anteriores?",
+        sub: "Consultar registros internos y referencias de recintos similares",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 70, partial: 35, no: 0 }
+      },
+      {
+        id: "B6Q3",
+        text: "¿Ha habido denuncias formales por daños a infraestructura en eventos del influencer?",
+        sub: "Incluir daños materiales, vandalismo o deterioro de espacios arrendados",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 65, partial: 30, no: 0 }
+      }
+    ]
+  },
+  {
+    id: "B7",
+    title: "Vulnerabilidades de Infraestructura — Sky Costanera",
+    weight: 0.05,
+    description: "Evaluación de riesgos específicos asociados a la infraestructura del edificio más alto de Sudamérica",
+    questions: [
+      {
+        id: "B7Q1",
+        text: "¿El evento contempla acceso a zonas restringidas, técnicas o de valor crítico del edificio?",
+        sub: "Áreas como servidor, cuartos de máquinas, azotea, escaleras de emergencia",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 80, partial: 40, no: 0 }
+      },
+      {
+        id: "B7Q2",
+        text: "¿Se contempla el uso de drones, equipos de transmisión o grabación aérea desde el edificio?",
+        sub: "Considerar implicancias de seguridad aérea y privacidad de inquilinos",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 50, partial: 25, no: 0 }
+      },
+      {
+        id: "B7Q3",
+        text: "¿El evento considera ingreso de equipos, estructuras o materiales no estándar al Sky Costanera?",
+        sub: "Tarimas, pirotecnia, estructuras metálicas, materiales inflamables",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 60, partial: 30, no: 0 }
+      },
+      {
+        id: "B7Q4",
+        text: "¿Se garantiza una dotación de seguridad privada reforzada proporcional al riesgo del evento?",
+        sub: "Mínimo 1 guardia por cada 50 asistentes, más supervisores adicionales",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 0, partial: 40, no: 80 }
+      }
+    ]
+  },
+  {
+    id: "B8",
+    title: "Reputación Digital y Exposición Mediática Negativa",
+    weight: 0.03,
+    description: "Evaluación del impacto reputacional para Cencosud y Gran Torre Costanera ante asociación con el influencer",
+    questions: [
+      {
+        id: "B8Q1",
+        text: "¿La asociación pública del edificio con este influencer puede generar daño reputacional verificable a Cencosud?",
+        sub: "Considerar posicionamiento de marca, clientes corporativos e imagen internacional",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 70, partial: 35, no: 0 }
+      },
+      {
+        id: "B8Q2",
+        text: "¿El influencer ha sido sancionado, suspendido o baneado en plataformas digitales por violación de normas comunitarias?",
+        sub: "Instagram, TikTok, YouTube, X/Twitter, etc.",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 50, partial: 25, no: 0 }
+      },
+      {
+        id: "B8Q3",
+        text: "¿Existe cobertura mediática negativa reciente (últimos 12 meses) que involucre al influencer en actos ilegales?",
+        sub: "Prensa escrita, televisión, portales de noticias de alcance nacional",
+        veto: false,
+        type: "yesno",
+        scores: { yes: 60, partial: 30, no: 0 }
+      }
+    ]
+  }
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let answers = {};
+let currentResult = null;
+
+// ============================================================
+//  INIT
+// ============================================================
+window.onload = function() {
+  renderBlocks();
+  renderFichaBlocks();
+  loadHistory();
+  setTodayDate();
+  startClock();
+};
+
+function startClock() {
+  const el = document.getElementById('clock-display');
+  function update() {
+    const now = new Date();
+    el.textContent = now.toLocaleString('es-CL', {
+      weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).toUpperCase();
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+function setTodayDate() {
+  const d = document.getElementById('inf-date');
+  if (d) d.value = new Date().toISOString().split('T')[0];
+}
+
+// ============================================================
+//  RENDER BLOCKS
+// ============================================================
+function renderBlocks() {
+  const container = document.getElementById('blocks-container');
+  container.innerHTML = '';
+  BLOCKS.forEach((block, bi) => {
+    const blockEl = document.createElement('div');
+    blockEl.className = 'eval-block animate-in';
+    blockEl.style.animationDelay = (bi * 0.06) + 's';
+    blockEl.id = 'block-' + block.id;
+
+    let qHtml = '';
+    block.questions.forEach((q, qi) => {
+      let controls = '';
+      if (q.type === 'yesno') {
+        controls = `
+          <div class="radio-group">
+            <button class="radio-btn" id="${q.id}-yes" onclick="setAnswer('${q.id}','yes','${block.id}')">SÍ</button>
+            <button class="radio-btn" id="${q.id}-partial" onclick="setAnswer('${q.id}','partial','${block.id}')">PARCIAL</button>
+            <button class="radio-btn" id="${q.id}-no" onclick="setAnswer('${q.id}','no','${block.id}')">NO</button>
+          </div>`;
+      } else {
+        const opts = q.options.map((o, i) => `<option value="${i}">${o}</option>`).join('');
+        controls = `<select class="q-select" id="${q.id}-select" onchange="setAnswerSelect('${q.id}','${block.id}',this.value)">
+          <option value="">— Seleccionar —</option>${opts}
+        </select>`;
+      }
+
+      qHtml += `
+        <div class="question-row" id="row-${q.id}">
+          <div>
+            <div class="q-text">${q.text}</div>
+            <div class="q-sub">${q.sub}</div>
+            ${q.veto ? '<div class="q-veto-indicator">▲ CRITERIO DE VETO AUTOMÁTICO</div>' : ''}
+          </div>
+          <div class="q-controls">${controls}</div>
+        </div>`;
+    });
+
+    blockEl.innerHTML = `
+      <div class="block-header" onclick="toggleBlock('${block.id}')">
+        <div class="block-number">${block.id}</div>
+        <div class="block-title-text">${block.title}</div>
+        <div class="block-weight">PESO: ${Math.round(block.weight * 100)}%</div>
+        <div class="block-score-badge" id="badge-${block.id}">—</div>
+        <div class="veto-flag" id="veto-flag-${block.id}">VETO</div>
+      </div>
+      <div class="block-body" id="body-${block.id}">${qHtml}</div>`;
+
+    container.appendChild(blockEl);
+  });
+}
+
+function toggleBlock(id) {
+  const body = document.getElementById('body-' + id);
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+// ============================================================
+//  ANSWER LOGIC
+// ============================================================
+function setAnswer(qid, val, blockId) {
+  const q = findQuestion(qid);
+  answers[qid] = { type: 'yesno', value: val, score: q.scores[val] };
+
+  ['yes','partial','no'].forEach(v => {
+    const btn = document.getElementById(qid + '-' + v);
+    if (btn) {
+      btn.classList.remove('selected-yes','selected-partial','selected-no');
+      if (v === val) btn.classList.add('selected-' + v);
+    }
+  });
+
+  updateBlockBadge(blockId);
+  updateProgress();
+}
+
+function setAnswerSelect(qid, blockId, idx) {
+  if (idx === '') { delete answers[qid]; return; }
+  const q = findQuestion(qid);
+  const score = q.scores[parseInt(idx)];
+  answers[qid] = { type: 'select', value: parseInt(idx), score };
+  updateBlockBadge(blockId);
+  updateProgress();
+}
+
+function findQuestion(qid) {
+  for (const block of BLOCKS) {
+    for (const q of block.questions) {
+      if (q.id === qid) return q;
+    }
+  }
+  return null;
+}
+
+function updateBlockBadge(blockId) {
+  const block = BLOCKS.find(b => b.id === blockId);
+  if (!block) return;
+  const scores = block.questions.map(q => answers[q.id]?.score ?? null).filter(s => s !== null);
+  if (scores.length === 0) return;
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const badge = document.getElementById('badge-' + blockId);
+  if (badge) {
+    badge.textContent = avg + ' pts';
+    badge.style.color = scoreColor(avg);
+    badge.style.borderColor = scoreColor(avg);
+  }
+}
+
+function scoreColor(score) {
+  if (score <= 24) return '#2ecc71';
+  if (score <= 49) return '#f39c12';
+  if (score <= 74) return '#e74c3c';
+  return '#8e0000';
+}
+
+function updateProgress() {
+  const total = BLOCKS.reduce((acc, b) => acc + b.questions.length, 0);
+  const answered = Object.keys(answers).length;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ============================================================
+//  CALCULATE
+// ============================================================
+function calcular() {
+  let vetoTriggered = [];
+  let totalWeightedScore = 0;
+  let blockResults = [];
+
+  BLOCKS.forEach(block => {
+    let blockRawScores = [];
+    block.questions.forEach(q => {
+      const ans = answers[q.id];
+      if (ans) {
+        const sc = ans.score;
+        blockRawScores.push(sc);
+        if (q.veto && (ans.value === 'yes' || sc >= 90)) {
+          vetoTriggered.push({ qid: q.id, text: q.text, blockTitle: block.title });
+        }
+      }
+    });
+
+    const blockScore = blockRawScores.length > 0
+      ? blockRawScores.reduce((a,b) => a+b, 0) / blockRawScores.length
+      : 0;
+
+    const contribution = blockScore * block.weight;
+    totalWeightedScore += contribution;
+
+    blockResults.push({
+      id: block.id,
+      title: block.title,
+      weight: block.weight,
+      rawScore: Math.round(blockScore),
+      contribution: Math.round(contribution * 100) / 100,
+      answered: blockRawScores.length,
+      total: block.questions.length
+    });
+  });
+
+  const finalScore = Math.round(totalWeightedScore);
+
+  let level, decision, levelColor;
+  if (vetoTriggered.length > 0) {
+    level = 'VETO'; decision = 'VETADO'; levelColor = '#ff0000';
+  } else if (finalScore >= 75) {
+    level = 'EXTREMO'; decision = 'RECHAZADO'; levelColor = '#8e0000';
+  } else if (finalScore >= 50) {
+    level = 'ALTO'; decision = 'RECHAZADO'; levelColor = '#e74c3c';
+  } else if (finalScore >= 25) {
+    level = 'MEDIO'; decision = 'CONDICIONAL'; levelColor = '#f39c12';
+  } else {
+    level = 'BAJO'; decision = 'APROBADO'; levelColor = '#2ecc71';
+  }
+
+  currentResult = {
+    influencer: document.getElementById('inf-name').value || 'Sin nombre',
+    social: document.getElementById('inf-social').value,
+    company: document.getElementById('inf-company').value,
+    event: document.getElementById('inf-event').value,
+    capacity: document.getElementById('inf-capacity').value,
+    followers: document.getElementById('inf-followers').value,
+    evaluator: document.getElementById('inf-evaluator').value,
+    date: document.getElementById('inf-date').value,
+    rut: document.getElementById('inf-rut').value,
+    finalScore,
+    level,
+    decision,
+    levelColor,
+    vetoTriggered,
+    blockResults,
+    timestamp: new Date().toISOString()
+  };
+
+  renderResult(currentResult);
+  switchTab('result');
+
+  if (vetoTriggered.length > 0) {
+    const msg = vetoTriggered.map(v => `• ${v.blockTitle}: ${v.text.substring(0,60)}...`).join('\n');
+    document.getElementById('vetoOverlayMsg').innerHTML =
+      'Se han detectado <strong>' + vetoTriggered.length + '</strong> criterio(s) de veto automático:<br><br>' +
+      vetoTriggered.map(v => `▸ ${v.blockTitle}`).join('<br>') +
+      '<br><br>La solicitud queda DENEGADA de forma inmediata.<br>Notifique a Tower Manager y documente el incidente.';
+    document.getElementById('vetoOverlay').classList.add('show');
+  }
+}
+
+// ============================================================
+//  RENDER RESULT
+// ============================================================
+function renderResult(r) {
+  // Gauge needle
+  const angle = -90 + (r.finalScore / 100) * 180;
+  document.getElementById('gaugeNeedle').setAttribute('transform', `rotate(${angle}, 140, 140)`);
+  document.getElementById('gaugeScore').textContent = r.finalScore;
+  document.getElementById('result-level-gauge').textContent = r.level;
+  document.getElementById('result-level-gauge').style.color = r.levelColor;
+
+  // Mini bars
+  const miniBars = document.getElementById('mini-bars');
+  miniBars.innerHTML = r.blockResults.map(b => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--gold-dim); width:22px;">${b.id}</div>
+      <div style="font-size:11px; flex:1; color:var(--white-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title.substring(0,30)}…</div>
+      <div class="bar-track" style="width:80px; background:rgba(255,255,255,0.06);">
+        <div class="bar-fill" style="width:${b.rawScore}%; background:${scoreColor(b.rawScore)};"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace; font-size:11px; color:${scoreColor(b.rawScore)}; width:30px; text-align:right;">${b.rawScore}</div>
+    </div>
+  `).join('');
+
+  // Decision banner
+  const decisionEl = document.getElementById('result-decision');
+  decisionEl.textContent = decision_text(r);
+  decisionEl.className = 'result-decision decision-' + r.decision;
+
+  // Veto box
+  const vetoBox = document.getElementById('veto-reasons-box');
+  if (r.vetoTriggered.length > 0) {
+    vetoBox.style.display = 'block';
+    document.getElementById('veto-reasons-list').innerHTML =
+      r.vetoTriggered.map(v => `▸ <strong>${v.blockTitle}:</strong> ${v.text}`).join('<br>');
+  } else {
+    vetoBox.style.display = 'none';
+  }
+
+  // Breakdown table
+  const tbody = document.getElementById('breakdown-body');
+  tbody.innerHTML = r.blockResults.map(b => {
+    const lv = levelFromScore(b.rawScore);
+    const col = scoreColor(b.rawScore);
+    return `
+      <tr>
+        <td style="color:var(--white); font-weight:500;">${b.title}</td>
+        <td style="font-family:'Share Tech Mono',monospace; color:var(--gold-dim);">${Math.round(b.weight*100)}%</td>
+        <td style="font-family:'Share Tech Mono',monospace; color:${col}; font-size:16px;">${b.rawScore}</td>
+        <td style="font-family:'Share Tech Mono',monospace; color:var(--white-dim);">${b.contribution.toFixed(1)}</td>
+        <td><span class="score-pill" style="color:${col}; border-color:${col};">${lv}</span></td>
+        <td class="bar-cell">
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${b.rawScore}%; background:${col};"></div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Recommendations
+  renderRecommendations(r);
+
+  // Info boxes
+  document.getElementById('res-name').textContent = r.influencer;
+  document.getElementById('res-social').textContent = r.social || '—';
+  document.getElementById('res-event-info').innerHTML =
+    `Tipo: ${r.event || '—'}<br>Capacidad: ${r.capacity || '—'}<br>Seguidores: ${r.followers || '—'}<br>Evaluador: ${r.evaluator || '—'}`;
+}
+
+function decision_text(r) {
+  if (r.decision === 'VETADO') return '🚫 VETO AUTOMÁTICO — SOLICITUD DENEGADA';
+  if (r.decision === 'RECHAZADO') return '✕ SOLICITUD RECHAZADA — ' + r.level;
+  if (r.decision === 'CONDICIONAL') return '⚠ APROBACIÓN CONDICIONAL — REVISAR REQUISITOS';
+  return '✓ SOLICITUD APROBADA — RIESGO BAJO';
+}
+
+function levelFromScore(s) {
+  if (s >= 75) return 'EXTREMO';
+  if (s >= 50) return 'ALTO';
+  if (s >= 25) return 'MEDIO';
+  return 'BAJO';
+}
+
+function renderRecommendations(r) {
+  const container = document.getElementById('recommendations-container');
+  let recos = [];
+
+  if (r.decision === 'VETADO') {
+    recos = [
+      { title: 'ACCIÓN INMEDIATA', text: 'Rechazar la solicitud de arriendo de forma definitiva. Notificar por escrito a Tower Manager y Center Manager con copia al departamento legal de Cencosud.' },
+      { title: 'DOCUMENTACIÓN', text: 'Registrar todos los antecedentes que activaron el veto en el sistema CCTV de incidentes y en el libro de novedades de seguridad. Conservar respaldo digital por mínimo 5 años.' },
+      { title: 'COORDINACIÓN INTERINSTITUCIONAL', text: 'Informar a la unidad policial territorial (Carabineros, SIAT o PDI) si los antecedentes evidencian vinculación con delitos graves. Cumplimiento artículo 175 CPP.' },
+      { title: 'SEGUIMIENTO', text: 'Monitorizar redes sociales del influencer durante los 7 días posteriores al rechazo para detectar posibles llamados a presentarse al edificio.' }
+    ];
+  } else if (r.decision === 'RECHAZADO') {
+    recos = [
+      { title: 'RECHAZO FUNDADO', text: 'Emitir carta de rechazo formal con fundamentos objetivos basados en esta matriz. Nivel ' + r.level + '. No ceder ante presiones comerciales o de la productora.' },
+      { title: 'INFORME A GERENCIA', text: 'Elevar informe de riesgo a Tower Manager y Center Manager dentro de las 24 horas siguientes con el detalle de las dimensiones críticas identificadas.' },
+      { title: 'ACTUALIZAR LISTA DE RESTRICCIONES', text: 'Incorporar al influencer en el registro interno de solicitantes con evaluación de riesgo ALTO/EXTREMO para futuras solicitudes.' }
+    ];
+  } else if (r.decision === 'CONDICIONAL') {
+    recos = [
+      { title: 'CONDICIONES MÍNIMAS OBLIGATORIAS', text: 'El arriendo puede proceder SOLO si se cumplen: (1) Contrato con cláusula de responsabilidad civil por daños; (2) Seguro de responsabilidad civil por evento; (3) Dotación de seguridad reforzada (+30% sobre dotación estándar).' },
+      { title: 'PROTOCOLO DE COMUNICACIONES', text: 'El influencer y/o productora deben firmar protocolo de no divulgación de detalles operacionales del edificio (pisos, accesos, sistemas de seguridad) en redes sociales antes, durante y post evento.' },
+      { title: 'REUNIÓN PREVIA OBLIGATORIA', text: 'Convocar reunión presencial entre Jefatura de Seguridad, Tower Manager, representante del influencer y productora, mínimo 72 horas antes del evento para validar protocolos.' },
+      { title: 'SUPERVISIÓN REFORZADA', text: 'Asignar supervisor de seguridad dedicado al evento más guardia en piso Sky durante toda la duración. Activar registro CCTV en HD continuo.' }
+    ];
+  } else {
+    recos = [
+      { title: 'PROCEDIMIENTO ESTÁNDAR', text: 'El influencer cumple los parámetros de seguridad básicos. Proceder con el proceso de arriendo según contrato estándar de Sky Costanera.' },
+      { title: 'PROTOCOLO PREVENTIVO', text: 'Mantener la dotación estándar de seguridad. Realizar briefing de seguridad con el equipo de producción 24 horas antes del evento.' },
+      { title: 'MONITOREO CONTINUO', text: 'Mantener monitoreo de redes sociales del influencer durante los 7 días previos al evento para detectar cambios en su perfil de riesgo.' }
+    ];
+  }
+
+  container.innerHTML = recos.map(r => `
+    <div class="reco-box">
+      <div class="reco-title">${r.title}</div>
+      <div class="reco-text">${r.text}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+//  HISTORY
+// ============================================================
+function saveToHistory() {
+  if (!currentResult) { alert('No hay resultado que guardar. Calcule primero.'); return; }
+  const hist = JSON.parse(localStorage.getItem('sky_risk_history') || '[]');
+  hist.unshift({ ...currentResult, id: Date.now() });
+  localStorage.setItem('sky_risk_history', JSON.stringify(hist));
+  loadHistory();
+  alert('✓ Evaluación guardada en el historial.');
+}
+
+function loadHistory() {
+  const hist = JSON.parse(localStorage.getItem('sky_risk_history') || '[]');
+  const container = document.getElementById('history-container');
+  if (hist.length === 0) {
+    container.innerHTML = '<div class="empty-history">NO HAY EVALUACIONES REGISTRADAS</div>';
+    return;
+  }
+  container.innerHTML = hist.map(item => {
+    const col = item.decision === 'VETADO' ? '#ff0000' :
+                item.decision === 'RECHAZADO' ? (item.level === 'EXTREMO' ? '#8e0000' : '#e74c3c') :
+                item.decision === 'CONDICIONAL' ? '#f39c12' : '#2ecc71';
+    return `
+      <div class="history-item" onclick="loadHistoryItem(${item.id})">
+        <div>
+          <div class="hist-name">${item.influencer}</div>
+          <div class="hist-date">${new Date(item.timestamp).toLocaleString('es-CL')} · ${item.event || '—'} · Eval: ${item.evaluator || '—'}</div>
+        </div>
+        <div class="hist-score">${item.finalScore}<span style="font-size:12px; color:var(--gold-dim);"> pts</span></div>
+        <div class="hist-level" style="color:${col}; border-color:${col};">${item.level}</div>
+        <button class="hist-btn-delete" onclick="event.stopPropagation(); deleteHistoryItem(${item.id})">✕ ELIMINAR</button>
+      </div>`;
+  }).join('');
+}
+
+function loadHistoryItem(id) {
+  const hist = JSON.parse(localStorage.getItem('sky_risk_history') || '[]');
+  const item = hist.find(h => h.id === id);
+  if (!item) return;
+  currentResult = item;
+  renderResult(item);
+  switchTab('result');
+}
+
+function deleteHistoryItem(id) {
+  if (!confirm('¿Eliminar esta evaluación del historial?')) return;
+  let hist = JSON.parse(localStorage.getItem('sky_risk_history') || '[]');
+  hist = hist.filter(h => h.id !== id);
+  localStorage.setItem('sky_risk_history', JSON.stringify(hist));
+  loadHistory();
+}
+
+function clearHistory() {
+  if (!confirm('¿Borrar TODO el historial? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem('sky_risk_history');
+  loadHistory();
+}
+
+// ============================================================
+//  TABS & UTILS
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'history') loadHistory();
+}
+
+function resetForm() {
+  if (!confirm('¿Limpiar todos los datos del formulario?')) return;
+  answers = {};
+  document.querySelectorAll('.field-input').forEach(el => {
+    el.value = '';
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+  });
+  document.querySelectorAll('.radio-btn').forEach(btn => {
+    btn.classList.remove('selected-yes','selected-partial','selected-no');
+  });
+  document.querySelectorAll('.q-select').forEach(sel => sel.selectedIndex = 0);
+  document.querySelectorAll('[id^="badge-"]').forEach(b => {
+    b.textContent = '—';
+    b.style.color = '';
+    b.style.borderColor = '';
+  });
+  document.getElementById('progressFill').style.width = '0%';
+  setTodayDate();
+}
+
+function printReport() {
+  window.print();
+}
+
+// ============================================================
+//  FICHA DE ACTIVACION DATA & RENDER
+// ============================================================
+const FICHA_SECTIONS = {
+  seg: {
+    container: 'ficha-seg-container',
+    questions: [
+      { id:'fs1', text:'Se presentara algun influencer?', obs: true },
+      { id:'fs2', text:'Es una actividad abierta a publico o privada?', options:['ABIERTA','PRIVADA'], obs: true },
+      { id:'fs3', text:'Tienen estimacion de publico? (especificar cantidad)', obs: true },
+      { id:'fs4', text:'Tienen considerados guardias de seguridad? (especificar cantidad y empresa)', obs: true },
+      { id:'fs5', text:'Cuentan con usuario KSEC registrado?', obs: true },
+      { id:'fs6', text:'Cuentan con separadores / control de flujo de personas?', obs: true },
+    ]
+  },
+  com: {
+    container: 'ficha-com-container',
+    questions: [
+      { id:'fc1', text:'Existe comunicacion previa al evento hacia el publico?', obs: true },
+      { id:'fc2', text:'El influencer realiza invitaciones previas o durante la actividad por RRSS?', obs: true },
+      { id:'fc3', text:'La dinamica tiene alguna restriccion de acceso o cupo?', obs: true },
+    ]
+  },
+  mant: {
+    container: 'ficha-mant-container',
+    questions: [
+      { id:'fm1', text:'Necesitan punto electrico? (especificar capacidad en kW)', obs: true },
+      { id:'fm2', text:'Necesitan alguna solucion sanitaria adicional?', obs: true },
+    ]
+  },
+  prev: {
+    container: 'ficha-prev-container',
+    questions: [
+      { id:'fp1', text:'Se requieren trabajos criticos? (altura, corte de materiales, soldadura)', obs: true },
+      { id:'fp2', text:'Cuentan con elementos de extincion de incendios (extintores)?', obs: true },
+    ]
+  }
+};
+
+function renderFichaBlocks() {
+  Object.entries(FICHA_SECTIONS).forEach(([key, section]) => {
+    const container = document.getElementById(section.container);
+    if (!container) return;
+    container.innerHTML = section.questions.map(q => `
+      <div class="question-row" id="frow-${q.id}">
+        <div>
+          <div class="q-text">${q.text}</div>
+        </div>
+        <div class="q-controls" style="gap:6px;">
+          <div class="radio-group">
+            <button class="radio-btn" id="${q.id}-si" onclick="setFichaAnswer('${q.id}','SI')">SI</button>
+            <button class="radio-btn" id="${q.id}-no" onclick="setFichaAnswer('${q.id}','NO')">NO</button>
+          </div>
+          <input class="field-input" id="${q.id}-obs" type="text" placeholder="Observacion / detalle..."
+            style="min-width:220px;padding:6px 10px;font-size:12px;">
+        </div>
+      </div>
+    `).join('');
+  });
+}
+
+function setFichaAnswer(qid, val) {
+  ['si','no'].forEach(v => {
+    const btn = document.getElementById(qid + '-' + v);
+    if (!btn) return;
+    btn.classList.remove('selected-yes','selected-no');
+  });
+  const selBtn = document.getElementById(qid + '-' + val.toLowerCase());
+  if (selBtn) selBtn.classList.add(val === 'SI' ? 'selected-yes' : 'selected-no');
+}
+
+function printFicha() {
+  window.print();
+}
+
+function clearFicha() {
+  if (!confirm('Limpiar todos los datos de la Ficha de Activacion?')) return;
+  ['fa-nombre','fa-responsable','fa-contacto','fa-fecha-inicio','fa-fecha-termino',
+   'fa-descripcion','fa-observaciones','fa-firma-prod-nombre','fa-firma-prod-rut',
+   'fa-firma-prod-firma','fa-firma-ops-nombre','fa-firma-ops-cargo','fa-firma-ops-firma'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['fa-lugar','fa-habilitado'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.selectedIndex = 0;
+  });
+  document.querySelectorAll('[id$="-si"],[id$="-no"]').forEach(btn => {
+    btn.classList.remove('selected-yes','selected-no');
+  });
+  document.querySelectorAll('[id$="-obs"]').forEach(inp => inp.value = '');
+}
+
+// Init ficha blocks on load
+document.addEventListener('DOMContentLoaded', function() {
+  renderFichaBlocks();
+});
+</script>
+</body>
+</html>
